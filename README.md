@@ -73,7 +73,7 @@ checkStatus = status(n,requestid);
 
 ### Delete requested data.
 ```MATLAB
-deleteStatus = status(n,requestid);
+deleteStatus = delete(n,requestid);
 ```
 ## License
 
