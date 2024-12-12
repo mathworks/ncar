@@ -29,7 +29,7 @@ function [d,response] = status(c,id)
 %             Body: [1x1 matlab.net.http.MessageBody]
 %        Completed: 0
 
-%   Copyright 2023 The MathWorks, Inc. 
+%   Copyright 2023-2024 The MathWorks, Inc. 
 
 % Request type
 method = "GET";
@@ -39,15 +39,13 @@ if nargin < 2
 end
 
 % Create url
-urlString = strcat(c.URL,"request/",id);
+urlString = strcat(c.URL,"status/",id,"?token=",c.Token);
 
 % Create URI object
 HttpURI = matlab.net.URI(strcat(urlString));
 
 % Create request
-% Basic authentication header
-authString = strcat("Basic ",matlab.net.base64encode(strcat(c.Username,":",c.Password)));
-HttpHeader = matlab.net.http.HeaderField("Content-Type",c.MediaType,"Authorization",authString);
+HttpHeader = matlab.net.http.HeaderField("Content-Type",c.MediaType);
 RequestMethod = matlab.net.http.RequestMethod(method);
 Request = matlab.net.http.RequestMessage(RequestMethod,HttpHeader);
 
@@ -58,7 +56,7 @@ response = send(Request,HttpURI,options);
 
 % Parse response into table
 try
-  d = struct2table(jsondecode(response.Body.Data).result,"AsArray",true);
+  d = struct2table(response.Body.Data,"AsArray",true);
 catch
   d = response;
 end

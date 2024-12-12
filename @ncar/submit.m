@@ -35,13 +35,13 @@ function [d,response] = submit(c,requestdata)
 %             Body: [1x1 matlab.net.http.MessageBody]
 %        Completed: 0
 
-%   Copyright 2023 The MathWorks, Inc. 
+%   Copyright 2023-2024 The MathWorks, Inc. 
 
 % Request type
 method = "POST";
 
 % Create url
-urlString = strcat(c.URL,"/request/");
+urlString = strcat(c.URL,"/submit/","?token=",c.Token);
 
 % Create URI object
 HttpURI = matlab.net.URI(strcat(urlString));
@@ -51,8 +51,7 @@ HttpBody = matlab.net.http.MessageBody(requestdata);
 
 % Create request
 % Basic authentication header
-authString = strcat("Basic ",matlab.net.base64encode(strcat(c.Username,":",c.Password)));
-HttpHeader = matlab.net.http.HeaderField("Content-Type",c.MediaType,"Authorization",authString);
+HttpHeader = matlab.net.http.HeaderField("Content-Type",c.MediaType);
 RequestMethod = matlab.net.http.RequestMethod(method);
 Request = matlab.net.http.RequestMessage(RequestMethod,HttpHeader,HttpBody);
 
@@ -63,7 +62,7 @@ response = send(Request,HttpURI,options);
 
 % Parse response
 try
-  d = string(jsondecode(response.Body.Data).result.request_id);
+  d = string(response.Body.Data.data.request_id);
 catch
   d = response;
 end

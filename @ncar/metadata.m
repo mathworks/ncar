@@ -30,21 +30,19 @@ function [d,response] = metadata(c,id)
 %  
 %   See also ncar, paramsummary. 
 
-%   Copyright 2023 The MathWorks, Inc. 
+%   Copyright 2023-2024 The MathWorks, Inc. 
 
 % Request type
 method = "GET";
 
 % Create url
-urlString = strcat(c.URL,"/metadata/",id);
+urlString = strcat(c.URL,"/metadata/",id,"?token=",c.Token);
 
 % Create URI object
 HttpURI = matlab.net.URI(strcat(urlString));
 
 % Create request
-% Basic authentication header
-authString = strcat("Basic ",matlab.net.base64encode(strcat(c.Username,":",c.Password)));
-HttpHeader = matlab.net.http.HeaderField("Content-Type",c.MediaType,"Authorization",authString);
+HttpHeader = matlab.net.http.HeaderField("Content-Type",c.MediaType);
 RequestMethod = matlab.net.http.RequestMethod(method);
 Request = matlab.net.http.RequestMessage(RequestMethod,HttpHeader);
 
@@ -62,10 +60,10 @@ try
   if strcmp(string(response.StatusCode),"200")
 
     % Get result data
-    d = response.Body.Data.result;
+    d = response.Body.Data;
 
     % Convert unstructured data into table
-    d.data = ncar.parseResponse(d);
+    d.data = ncar.parseResponse(d.data);
 
     % Convert output structure into table
     d = struct2table(d,"AsArray",true);
@@ -78,7 +76,7 @@ try
 
 catch
 
-    d = response;
+    d = struct2table(response.Body.Data.data,"AsArray",true);
 
 end
 

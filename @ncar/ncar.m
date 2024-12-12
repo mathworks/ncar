@@ -1,14 +1,14 @@
 classdef ncar < handle
 %NCAR National Center for Atmospheric Research connection.
-%   C = NCAR(USERNAME,PASSWORD) creates a NCAR connection object using the 
-%   USERNAME and PASSWORD.  USERNAME and PASSWORD can be input as string 
+%   C = NCAR(ORCID,TOKEN) creates a NCAR connection object using the 
+%   ORCID and TOKEN.  ORCID and TOKEN can be input as string 
 %   scalars or character vectors.  TIMEOUT is the request value in 
-%   milliseconds and input as a numeric value. The default value is 
-%   200 milliseconds. C is an ncar object.
+%   seconds and input as a numeric value. The default value is 
+%   200 seconds. C is an ncar object.
 %
 %   For example,
 %   
-%   c = ncar("username","password")
+%   c = ncar("orcid","token")
 %
 %   returns
 %
@@ -31,17 +31,17 @@ classdef ncar < handle
   end
   
   properties (Access = 'private')
-    Username 
-    Password
+    ORCID 
+    Token
   end
   
   methods (Access = 'public')
   
-      function c = ncar(username,password,timeout,url,mediatype,debugmodevalue)
+      function c = ncar(orcid,token,timeout,url,mediatype,debugmodevalue)
          
         %  Registered noaa users will have an authentication token
         if nargin < 2
-          error("datafeed:ncar:missingToken","NCAR username and password required for data requests.");
+          error("datafeed:ncar:missingToken","NCAR orcid and token required for data requests.");
         end
         
         % Timeout value for requests
@@ -55,7 +55,7 @@ classdef ncar < handle
         if exist("url","var") && ~isempty(url)
           c.URL = url;
         else
-          c.URL = "https://rda.ucar.edu/json_apps/";
+          c.URL = "https://rda.ucar.edu/api/";
         end
 
         % Specify HTTP media type i.e. application content to deal with
@@ -74,18 +74,18 @@ classdef ncar < handle
         end
 
         % Authenticate credentials
-        authenticate(c,username,password)
+        authenticate(c,orcid,token)
 
         % Store credentials in object
-        c.Username = username;
-        c.Password = password;
+        c.ORCID = orcid;
+        c.Token = token;
 
       end
   end
 
   methods (Access = 'private')
   
-      function authenticate(c,username,password)
+      function authenticate(c,orcid,token)
 
         % Set request parameters
         method = "POST";
@@ -93,7 +93,7 @@ classdef ncar < handle
         HttpURI = matlab.net.URI("https://rda.ucar.edu/cgi-bin/login");
 
         HttpBody = matlab.net.http.MessageBody();
-        HttpBody.Payload = strcat("email=",username,"&passwd=",password,"&action=login");
+        HttpBody.Payload = strcat("orcid_id=",orcid,"&api_token=",token,"&action=tokenlogin");
             
         HttpHeader = matlab.net.http.HeaderField("Content-Type",c.MediaType);
       

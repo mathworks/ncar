@@ -27,21 +27,19 @@ function [d,response] = summary(c,id)
 %             Body: [1x1 matlab.net.http.MessageBody]
 %        Completed: 0
 
-%   Copyright 2023 The MathWorks, Inc. 
+%   Copyright 2023-2024 The MathWorks, Inc. 
 
 % Request type
 method = "GET";
 
 % Create url
-urlString = strcat(c.URL,"/summary/",id);
+urlString = strcat(c.URL,"/summary/",id,"?token=",c.Token);
 
 % Create URI object
 HttpURI = matlab.net.URI(strcat(urlString));
 
 % Create request
-% Basic authentication header
-authString = strcat("Basic ",matlab.net.base64encode(strcat(c.Username,":",c.Password)));
-HttpHeader = matlab.net.http.HeaderField("Content-Type",c.MediaType,"Authorization",authString);
+HttpHeader = matlab.net.http.HeaderField("Content-Type",c.MediaType);
 RequestMethod = matlab.net.http.RequestMethod(method);
 Request = matlab.net.http.RequestMessage(RequestMethod,HttpHeader);
 
@@ -75,7 +73,7 @@ try
 
 catch
 
-    d = response;
+    d = struct2table(response.Body.Data.data,"AsArray",true);
 
 end
 
