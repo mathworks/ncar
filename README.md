@@ -9,7 +9,7 @@ This interface allows users to access NCAR data directly from MATLAB.  Quantitat
 ## System Requirements
 
 - MATLAB R2022a or later
-- Web services credentials supplied by NCAR: https://rda.ucar.edu/login/
+- Web services credentials supplied by NCAR: https://rda.ucar.edu/
 - User are responsible for complying with any terms governing their use of the National Center for Atmospheric Research Data.
 
 ## Features
@@ -71,7 +71,7 @@ checkStatus = status(n,requestid);
 ```
 
 ### Download requested data.
-#### Note that there is no API method to programmatically download the data.  Users can login to the NCAR site, https://rda.ucar.edu/login/, to access their data requests. From the website, choose User Dashboard and select the Show Requests option to access the requested data.
+#### Note that there is no API method to programmatically download the data.  Users can login to the NCAR site, https://rda.ucar.edu/, to access their data requests. From the website, choose User Dashboard and select the Show Requests option to access the requested data.
 
 ### Delete requested data.
 ```MATLAB
